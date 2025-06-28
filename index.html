@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Ghi âm và trả lời</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        button { padding: 10px 20px; font-size: 16px; }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Ghi âm câu hỏi</h1>
+    <button id="recordBtn">Bắt đầu ghi âm</button>
+    <div id="result">
+        <p><strong>Câu hỏi:</strong> <span id="question"></span></p>
+        <p><strong>Câu trả lời:</strong> <span id="answer"></span></p>
+        <p><strong>Link:</strong> <span id="link"></span></p>
+    </div>
+
+    <script>
+        document.getElementById('recordBtn').addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = "Đang ghi âm...";
+
+            fetch('http://localhost:5000/record', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('question').textContent = data.question;
+                    document.getElementById('answer').textContent = data.answer;
+                    document.getElementById('link').textContent = data.link;
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                    document.getElementById('question').textContent = "Đã xảy ra lỗi";
+                })
+                .finally(() => {
+                    this.disabled = false;
+                    this.textContent = "Bắt đầu ghi âm";
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghi âm và trả lời</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Tra cứu thông tin y tế bằng giọng nói</h1>
+        <button id="recordBtn" class="btn">Bắt đầu ghi âm</button>
+        <div id="result" class="result-box">
+            <h3>Kết quả</h3>
+            <div class="result-item">
+                <strong>Câu hỏi từ âm thanh:</strong> <span id="input_question"></span>
+            </div>
+            <div class="result-item">
+                <strong>Câu trả lời:</strong> <span id="answer"></span>
+            </div>
+            <div class="result-item">
+                <strong>Link tra cứu thêm thông tin:</strong> <a id="link" href="#" target="_blank"></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('recordBtn').addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = 'Đang ghi âm...';
+            fetch('/record', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    this.disabled = false;
+                    this.textContent = 'Bắt đầu ghi âm';
+                    if (data.status === 'success') {
+                        document.getElementById('input_question').textContent = data.input_question;
+                        document.getElementById('answer').textContent = data.answer;
+                        document.getElementById('link').textContent = data.link;
+                        document.getElementById('link').href = data.link;
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => {
+                    this.disabled = false;
+                    this.textContent = 'Bắt đầu ghi âm';
+                    alert('Lỗi: ' + error);
+                });
+        });
+    </script>
+</body>
+</html>
